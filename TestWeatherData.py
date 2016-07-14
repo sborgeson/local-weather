@@ -60,14 +60,14 @@ class WeatherTest(unittest.TestCase):
     print('')
     
     within30 = self.wd.stationList(94568,y=2013,m=3,n=0,preferredDistKm=30)
-    print("%d station(s) within %d km from %d." % (len(within30),30, 12601))
+    print("%d station(s) within %d km from %d." % (len(within30),30, 94568))
     print("  WBAN, dist (km), name")
     for sta in within30: print("  %s" % self.wd.summarizeStation(sta))
     self.assertTrue(len(within30) == 3)
     print('')
 
     broken = self.wd.stationList(95223,y=2013,m=3,n=3)
-    print("%d station(s) within %d km from %d." % (len(broken),30, 12601))
+    print("%d station(s) within %d km from %d." % (len(broken),30, 95223))
     print("  WBAN, dist (km), name")
     for sta in broken: print("  %s" % self.wd.summarizeStation(sta))
 
