@@ -53,15 +53,25 @@ Using %d stations per location and a preferred distance of %d km.''' % (cfgFile,
   with open(cfgFile,'rb') as configFile:
     configData = csv.reader(configFile)
     configData.next() # bypass the headers
-    fmt = '%m/%d/%Y'
+    fmts = ('%m/%d/%Y','%m-%d-%Y','%Y/%m/%d','%Y-%m-%d')
     dateRange = []
     monthZips = {}
     minStart = None
     maxEnd   = None
     for (zip5,startStr,endStr) in configData:
       if zip5 == '': continue
-      startDt = datetime.datetime.strptime(startStr,fmt)
-      endDt   = datetime.datetime.strptime(endStr,fmt)
+      startDt = None
+      endDt = None
+      for fmt in fmts:
+        try:
+          startDt = datetime.datetime.strptime(startStr,fmt)
+        except: pass
+        if startDt is not None: break
+      for fmt in fmts:
+        try:
+          endDt = datetime.datetime.strptime(endStr,fmt)
+        except: pass
+        if endDt is not None: break
       start = datetime.datetime(startDt.year,startDt.month,1)
       end   = datetime.datetime(endDt.year,endDt.month,1)
       if(minStart is None or start < minStart): minStart = start

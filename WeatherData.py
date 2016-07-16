@@ -29,6 +29,9 @@ class WeatherData(object):
                                                           # list of historic through current WBAN stations
     self.ZIP5_FILE = os.path.join(dataDir,'Erle_zipcodes.csv')    # Zip codes with lat/lon from about 2004
                                                                   # see http://jeffreybreen.wordpress.com/2010/12/11/geocode-zip-codes/
+    self.GAZ_ZCTA_FILE = os.path.join(dataDir,'2015_Gaz_zcta_national.zip') # census gazeteer data: http://www.census.gov/geo/maps-data/data/gazetteer2015.html
+                                                                            # File from http://www2.census.gov/geo/docs/maps-data/data/gazetteer/2015_Gazetteer/2015_Gaz_zcta_national.zip
+    self.GAZ_INNER_FILE = '2015_Gaz_zcta_national.txt'
     # formerly http://cdo.ncdc.noaa.gov/qclcd_ascii/
     self.NOAA_QCLCD_DATA_DIR = 'http://www.ncdc.noaa.gov/orders/qclcd/' # Quality controlled local hourly, daily, monthly weather
                                                                         # for the whole US from NOAA. Downloaded 1 month at a time
@@ -45,6 +48,11 @@ class WeatherData(object):
       self.ZIP_MAP = {}
       for zipRow in zipList:
         self.ZIP_MAP[int(zipRow[0])] = (float(zipRow[3]),float(zipRow[4]))
+
+      # load additional zips from a second source
+      gazZCTA = self.zippedData(self.GAZ_ZCTA_FILE,self.GAZ_INNER_FILE,delim='\t', skip=1)
+      for gazRow in gazZCTA:
+        res = self.ZIP_MAP.setdefault(int(gazRow[0].strip()), (float(gazRow[5].strip()),float(gazRow[6].strip())) )
       print 'Zip to lat/long lookup initialized with %d entries' % len(self.ZIP_MAP)
     return self.ZIP_MAP
     
