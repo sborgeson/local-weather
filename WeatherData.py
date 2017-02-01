@@ -32,6 +32,9 @@ class WeatherData(object):
     self.GAZ_ZCTA_FILE = os.path.join(dataDir,'2015_Gaz_zcta_national.zip') # census gazeteer data: http://www.census.gov/geo/maps-data/data/gazetteer2015.html
                                                                             # File from http://www2.census.gov/geo/docs/maps-data/data/gazetteer/2015_Gazetteer/2015_Gaz_zcta_national.zip
     self.GAZ_INNER_FILE = '2015_Gaz_zcta_national.txt'
+    self.ZCDB_2012_FILE = os.path.join(dataDir,'free-zipcode-database-Primary.zip') # http://federalgovernmentzipcodes.us/ (primary location)
+                                                                            # http://federalgovernmentzipcodes.us/free-zipcode-database-Primary.csv
+    self.ZCDB_2012_INNER_FILE = 'free-zipcode-database-Primary.csv'
     # formerly http://cdo.ncdc.noaa.gov/qclcd_ascii/
     self.NOAA_QCLCD_DATA_DIR = 'http://www.ncdc.noaa.gov/orders/qclcd/' # Quality controlled local hourly, daily, monthly weather
                                                                         # for the whole US from NOAA. Downloaded 1 month at a time
@@ -53,6 +56,13 @@ class WeatherData(object):
       gazZCTA = self.zippedData(self.GAZ_ZCTA_FILE,self.GAZ_INNER_FILE,delim='\t', skip=1)
       for gazRow in gazZCTA:
         res = self.ZIP_MAP.setdefault(int(gazRow[0].strip()), (float(gazRow[5].strip()),float(gazRow[6].strip())) )
+      # load even more data from yet another source
+      zcdb = self.zippedData(self.ZCDB_2012_FILE,self.ZCDB_2012_INNER_FILE,delim=',', skip=1)
+      for zc in zcdb:
+        try:
+          res = self.ZIP_MAP.setdefault(int(zc[0].strip()), (float(zc[5].strip()),float(zc[6].strip())) )
+        except ValueError as ve:
+          pass
       print 'Zip to lat/long lookup initialized with %d entries' % len(self.ZIP_MAP)
     return self.ZIP_MAP
     
