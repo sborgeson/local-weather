@@ -207,7 +207,12 @@ class WeatherData(object):
     return closest
 
   def stationList(self,zip5,y,m,n=1,preferredDistKm=15): # returns the details for the n closest stations to zip5
-    if type(zip5) is not int: zip5 = int(zip5)
+    if type(zip5) is not int: 
+      try:
+        zip5 = int(zip5)
+      except:
+        print('Bad zip5 %s' % (zip5))
+        return None
     zips  = self.zipMap()
     #with Timer('stations'): # this next line takes about 0.038 to run
     stationDataList = self.stationData(y,m,skip=1)
@@ -285,7 +290,7 @@ class WeatherData(object):
     wdf = pd.DataFrame(weatherData,columns=['WBAN','dateStr','Tmax','Tmin','Tmean'])
     f = lambda x: 'wb%s' % x
     wdf['WBAN'] = wdf['WBAN'].map(f)
-    wdf['date'] = pd.tseries.tools.to_datetime(wdf['dateStr'],format='%Y%m%d')
+    wdf['date'] = pd.to_datetime(wdf['dateStr'],format='%Y%m%d')
     dmin = wdf['date'].min()
     dmax = wdf['date'].max()
     dts = pd.date_range(dmin,dmax,freq='D')
@@ -310,7 +315,7 @@ class WeatherData(object):
     f = lambda x: 'wb%s' % x
     wdf['WBAN'] = wdf['WBAN'].map(f)
     f = lambda x: x[0:2]
-    wdf['date'] = pd.tseries.tools.to_datetime(wdf['dateStr'] + wdf['hrStr'].map(f),format='%Y%m%d%H')
+    wdf['date'] = pd.to_datetime(wdf['dateStr'] + wdf['hrStr'].map(f),format='%Y%m%d%H')
     dmin = wdf['date'].min()
     dmax = wdf['date'].max()
     hrs = pd.date_range(dmin,dmax,freq='H')
