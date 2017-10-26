@@ -18,7 +18,6 @@ import numpy as np
 import datetime
 import math
 import pandas as pd
-import numpy as np
 
 class WeatherData(object):
   def __init__(self,dataDir):
